@@ -1,6 +1,7 @@
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import PostTable from './components/PostTable.vue';
+</script>
 
 <template>
-  <h1 class="text-4xl font-bold underline">Hello world!</h1>
+  <PostTable />
 </template>
-
