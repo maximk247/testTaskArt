@@ -3,35 +3,25 @@ import type { Post } from '~/interfaces/post.interface';
 
 export const usePostStore = defineStore('post', {
   state: () => ({
-    serverPosts: [] as Post[], // Посты с сервера
-    localPosts: [] as Post[], // Посты, созданные локально
+    posts: [] as Post[],
     loading: false,
     error: null as string | null,
     currentPage: 1,
     postsPerPage: 10,
     maxTotalId: 100, // Максимальный ID для постов
-    totalServerPosts: 0,
+    totalposts: 0,
   }),
   getters: {
     // Возвращаем посты, которые должны отображаться на текущей странице
     paginatedPosts(state) {
-      // Если текущая страница - последняя, добавляем локальные посты
-      if (
-        state.currentPage ===
-        Math.ceil(
-          (state.totalServerPosts + state.localPosts.length) /
-            state.postsPerPage,
-        )
-      ) {
-        return [...state.serverPosts, ...state.localPosts];
-      }
-      return state.serverPosts;
+      const start = (state.currentPage - 1) * state.postsPerPage;
+      const end = state.currentPage * state.postsPerPage;
+      return state.posts.slice(start, end);
     },
     // Общее количество страниц
     totalPages(state) {
-      return Math.ceil(
-        (state.totalServerPosts + state.localPosts.length) / state.postsPerPage,
-      );
+      const totalPosts = state.posts.length;
+      return Math.ceil(totalPosts / state.postsPerPage);
     },
   },
   actions: {
@@ -42,19 +32,12 @@ export const usePostStore = defineStore('post', {
       try {
         const response = await axios.get<Post[]>(
           'https://jsonplaceholder.typicode.com/posts',
-          {
-            params: {
-              _page: this.currentPage,
-              _limit: this.postsPerPage,
-            },
-          },
         );
-        this.serverPosts = response.data;
-        this.totalServerPosts = parseInt(response.headers['x-total-count'], 10);
+        this.posts = response.data;
+        this.totalposts = this.posts.length;
         const maxServerId = Math.max(
-          ...this.serverPosts.map((post) => post.id),
+          ...this.posts.map((post) => post.id),
         );
-        console.log(maxServerId);
         this.maxTotalId = Math.max(this.maxTotalId, maxServerId);
       } catch (e: unknown) {
         if (e instanceof Error) {
@@ -77,9 +60,9 @@ export const usePostStore = defineStore('post', {
           ...response.data,
           id: ++this.maxTotalId,
         };
-        this.localPosts.push(newPost); // Добавляем пост в локальные
+        this.posts.push(newPost);
 
-        // Переход на последнюю страницу, если новый пост добавляется
+        // Переключаемся на последнюю страницу после добавления поста, если он превышает лимит постов на страницу
         if (this.currentPage !== this.totalPages) {
           this.setCurrentPage(this.totalPages);
         }
@@ -95,7 +78,6 @@ export const usePostStore = defineStore('post', {
     setCurrentPage(page: number) {
       if (page >= 1 && page <= this.totalPages) {
         this.currentPage = page;
-        this.fetchPosts();
       }
     },
   },
