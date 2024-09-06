@@ -1,39 +1,24 @@
 <script lang="ts" setup>
-import type { Post } from '~/interfaces/post.interface';
+import { onMounted, ref } from 'vue';
 import { usePostStore } from '~/store/postStore';
 import PostModal from './PostModal.vue';
+import PostTablePagination from './PostTablePagination.vue';
+import type { Post } from '~/interfaces/post.interface';
 
 const postStore = usePostStore();
-const { loading, paginatedPosts, currentPage, totalPages } =
-  storeToRefs(postStore);
+const { paginatedPosts } = storeToRefs(postStore);
 const showModal = ref(false);
+const showLoading = ref(true);
 
-onMounted(() => {
-  postStore.fetchPosts();
+onMounted(async () => {
+  await lazyLoad();
 });
 
-function nextPage() {
-  if (currentPage.value < totalPages.value) {
-    postStore.setCurrentPage(currentPage.value + 1);
-  }
-}
-
-function prevPage() {
-  if (currentPage.value > 1) {
-    postStore.setCurrentPage(currentPage.value - 1);
-  }
-}
-
-function firstPage() {
-  if (currentPage.value > 1) {
-    postStore.setCurrentPage(1);
-  }
-}
-
-function lastPage() {
-  if (currentPage.value < totalPages.value) {
-    postStore.setCurrentPage(totalPages.value);
-  }
+async function lazyLoad() {
+  await postStore.fetchPosts(); 
+  setTimeout(() => {
+    showLoading.value = false; 
+  }, 300);
 }
 
 function createPost(postData: Omit<Post, 'id'>) {
@@ -44,43 +29,35 @@ function createPost(postData: Omit<Post, 'id'>) {
 <template>
   <div>
     <h1 class="text-2xl font-bold mb-4">Post Table</h1>
-    <button class="mb-4" @click="showModal = true">Create New Post</button>
+    <button class="mb-4 bg-blue-500 text-white py-2 px-4 rounded" @click="showModal = true">Create New Post</button>
 
-    <div v-if="loading" class="text-center">Loading...</div>
-
-    <table v-if="!loading">
-      <thead>
-        <tr>
-          <th>Id</th>
-          <th>Title</th>
-          <th>Body</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="post in paginatedPosts" :key="post.id">
-          <td>{{ post.id }}</td>
-          <td>{{ post.title }}</td>
-          <td>{{ post.body }}</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <div class="flex justify-center gap-2 mt-4">
-      <button :disabled="currentPage === 1" @click="firstPage">First</button>
-      <button :disabled="currentPage === 1" @click="prevPage">Previous</button>
-      <span>Page {{ currentPage }} of {{ totalPages }}</span>
-      <button :disabled="currentPage === totalPages" @click="nextPage">
-        Next
-      </button>
-      <button :disabled="currentPage === totalPages" @click="lastPage">
-        Last
-      </button>
+    <div v-if="showLoading" class="flex justify-center items-center">
+      <div class="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+      <span class="ml-4"> Loading... </span>
     </div>
 
-    <PostModal
-      v-if="showModal"
-      @submit="createPost"
-      @cancel="showModal = false"
-    />
+    <!-- Отображаем таблицу и пагинацию только если данные загружены -->
+    <div v-else>
+      <table class="min-w-full bg-white">
+        <thead class="bg-gray-800 text-white">
+          <tr>
+            <th class="py-2">Id</th>
+            <th class="py-2">Title</th>
+            <th class="py-2">Body</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="post in paginatedPosts" :key="post.id" class="bg-gray-100 border-b">
+            <td class="py-2 px-4">{{ post.id }}</td>
+            <td class="py-2 px-4">{{ post.title }}</td>
+            <td class="py-2 px-4">{{ post.body }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <PostTablePagination />
+    </div>
+
+    <PostModal v-if="showModal" @submit="createPost" @cancel="showModal = false" />
   </div>
 </template>
