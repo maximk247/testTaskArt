@@ -8,15 +8,28 @@ export const usePostStore = defineStore('post', {
     error: null as string | null,
     currentPage: 1,
     postsPerPage: 10,
-    maxTotalId: 100, // Максимальный ID для постов
+    maxTotalId: 100,
     totalposts: 0,
+    sortOrder: 'asc' as 'asc' | 'desc',
+    showModal: false,
   }),
   getters: {
+    // Получаем отсортированные посты
+    sortedPosts(state) {
+      return [...state.posts].sort((a, b) => {
+        if (state.sortOrder === 'asc') {
+          return a.id - b.id;
+        } else {
+          return b.id - a.id;
+        }
+      });
+    },
     // Возвращаем посты, которые должны отображаться на текущей странице
-    paginatedPosts(state) {
+    paginatedPosts(state): Post[] {
+      const sorted = this.sortedPosts;
       const start = (state.currentPage - 1) * state.postsPerPage;
       const end = state.currentPage * state.postsPerPage;
-      return state.posts.slice(start, end);
+      return sorted.slice(start, end); // Используем отсортированные посты
     },
     // Общее количество страниц
     totalPages(state) {
@@ -25,6 +38,7 @@ export const usePostStore = defineStore('post', {
     },
   },
   actions: {
+    // Функция получения постов
     async fetchPosts() {
       this.loading = true;
       this.error = null;
@@ -35,9 +49,7 @@ export const usePostStore = defineStore('post', {
         );
         this.posts = response.data;
         this.totalposts = this.posts.length;
-        const maxServerId = Math.max(
-          ...this.posts.map((post) => post.id),
-        );
+        const maxServerId = Math.max(...this.posts.map((post) => post.id));
         this.maxTotalId = Math.max(this.maxTotalId, maxServerId);
       } catch (e: unknown) {
         if (e instanceof Error) {
@@ -46,39 +58,51 @@ export const usePostStore = defineStore('post', {
           this.error = String(e);
         }
       } finally {
+        await new Promise((resolve) => setTimeout(resolve, 500)); // Симуляция загрузки
         this.loading = false;
       }
     },
 
-    async createPost(postData: Omit<Post, 'id'>) {
-      try {
-        const response = await axios.post<Post>(
-          'https://jsonplaceholder.typicode.com/posts',
-          postData,
-        );
-        const newPost = {
-          ...response.data,
-          id: ++this.maxTotalId,
-        };
-        this.posts.push(newPost);
+    // Функция переключения сортировки
+    toggleSortOrder() {
+      this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+    },
 
-        // Переключаемся на последнюю страницу после добавления поста, если он превышает лимит постов на страницу
+    // Функция добавления поста
+    createPost(postData: Omit<Post, 'id'>) {
+      const newPost: Post = {
+        ...postData,
+        id: ++this.maxTotalId,
+        userId: 1,
+      };
+      this.posts.push(newPost);
+
+      // Определяем, на какую страницу переключиться после добавления поста
+      if (this.sortOrder === 'asc') {
+        // Если сортировка по возрастанию, переключаемся на последнюю страницу
         if (this.currentPage !== this.totalPages) {
           this.setCurrentPage(this.totalPages);
         }
-      } catch (e: unknown) {
-        if (e instanceof Error) {
-          this.error = e.message;
-        } else {
-          this.error = String(e);
-        }
+      } else {
+        // Если сортировка по убыванию, переключаемся на первую страницу
+        this.setCurrentPage(1);
+      }
+
+      this.toggleModal(); // Закрываем модальное окно после создания поста
+    },
+
+    // Устанавливаем текущую страницу с индикацией загрузки
+    async setCurrentPage(page: number) {
+      if (page >= 1 && page <= this.totalPages) {
+        this.loading = true;
+        this.currentPage = page;
+        await new Promise((resolve) => setTimeout(resolve, 500)); // Симуляция загрузки
+        this.loading = false;
       }
     },
 
-    setCurrentPage(page: number) {
-      if (page >= 1 && page <= this.totalPages) {
-        this.currentPage = page;
-      }
+    toggleModal() {
+      this.showModal = !this.showModal;
     },
   },
 });
