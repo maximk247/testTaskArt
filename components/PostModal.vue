@@ -7,9 +7,7 @@ const postStore = usePostStore();
 const post = reactive({ title: '', body: '' });
 
 function submitPost() {
-  const userId = Math.floor(Math.random() * 100) + 1;
-  const postData = { ...post, userId };
-  postStore.createPost(postData);
+  postStore.createPost(post);
   post.title = '';
   post.body = '';
 }

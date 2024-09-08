@@ -46,7 +46,7 @@ function toggleModal() {
             <th class="py-2 cursor-pointer" @click="toggleSort">
               Id
               <span v-if="postStore.sortOrder === 'asc'">▲</span>
-              <span v-else>▼</span>
+              <span v-else-if="postStore.sortOrder === 'desc'">▼</span>
             </th>
             <th class="py-2">Title</th>
             <th class="py-2">Body</th>

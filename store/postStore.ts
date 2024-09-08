@@ -8,21 +8,24 @@ export const usePostStore = defineStore('post', {
     error: null as string | null,
     currentPage: 1,
     postsPerPage: 10,
-    maxTotalId: 100,
     totalposts: 0,
-    sortOrder: 'asc' as 'asc' | 'desc',
+    sortOrder: 'none' as 'asc' | 'desc' | 'none',
     showModal: false,
   }),
   getters: {
     // Получаем отсортированные посты
     sortedPosts(state) {
-      return [...state.posts].sort((a, b) => {
-        if (state.sortOrder === 'asc') {
-          return a.id - b.id;
-        } else {
-          return b.id - a.id;
-        }
-      });
+      switch (state.sortOrder) {
+        case 'asc':
+          return [...state.posts].sort((a, b) => a.id - b.id);
+        case 'desc':
+          return [...state.posts].sort((a, b) => b.id - a.id);
+        case 'none':
+          // Перемешиваем посты случайным образом
+          return [...state.posts].sort(() => Math.random() - 0.5);
+        default:
+          return state.posts;
+      }
     },
     // Возвращаем посты, которые должны отображаться на текущей странице
     paginatedPosts(state): Post[] {
@@ -35,6 +38,13 @@ export const usePostStore = defineStore('post', {
     totalPages(state) {
       const totalPosts = state.posts.length;
       return Math.ceil(totalPosts / state.postsPerPage);
+    },
+
+    // Максимальный ID
+    maxTotalId(state) {
+      return state.posts.length
+        ? Math.max(...state.posts.map((post) => post.id))
+        : 0;
     },
   },
   actions: {
@@ -49,8 +59,6 @@ export const usePostStore = defineStore('post', {
         );
         this.posts = response.data;
         this.totalposts = this.posts.length;
-        const maxServerId = Math.max(...this.posts.map((post) => post.id));
-        this.maxTotalId = Math.max(this.maxTotalId, maxServerId);
       } catch (e: unknown) {
         if (e instanceof Error) {
           this.error = e.message;
@@ -65,18 +73,31 @@ export const usePostStore = defineStore('post', {
 
     // Функция переключения сортировки
     toggleSortOrder() {
-      this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+      switch (this.sortOrder) {
+        case 'asc':
+          this.sortOrder = 'desc';
+          break;
+        case 'desc':
+          this.sortOrder = 'none';
+          break;
+        case 'none':
+          this.sortOrder = 'asc';
+          break;
+        default:
+          this.sortOrder = 'asc';
+      }
     },
 
     // Функция добавления поста
-    createPost(postData: Omit<Post, 'id'>) {
+    createPost(postData: Omit<Post, 'id' | 'userId'>) {
+      const nextPostId = this.maxTotalId + 1; // Определяем следующий ID поста
+      const userId = Math.ceil(nextPostId / 10); // Определяем userId по числу десятков
       const newPost: Post = {
         ...postData,
-        id: ++this.maxTotalId,
-        userId: 1,
+        id: nextPostId,
+        userId,
       };
       this.posts.push(newPost);
-
       // Определяем, на какую страницу переключиться после добавления поста
       if (this.sortOrder === 'asc') {
         // Если сортировка по возрастанию, переключаемся на последнюю страницу
@@ -101,6 +122,7 @@ export const usePostStore = defineStore('post', {
       }
     },
 
+    // Функция открытия/закрытия модального окна
     toggleModal() {
       this.showModal = !this.showModal;
     },
