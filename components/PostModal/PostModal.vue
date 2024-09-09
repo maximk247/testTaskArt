@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { usePostStore } from '~/store/postStore';
 import ModalCloseButton from '../UI/ModalCloseButton.vue';
 import PostModalForm from './PostModalForm.vue';
@@ -28,7 +28,7 @@ function onMouseDown(event: MouseEvent) {
   offsetX = event.clientX - modal.offsetLeft;
   offsetY = event.clientY - modal.offsetTop;
 
-  // Добавляем стиль, чтобы предотвратить выделение текста
+  // Предотвращаем выделение текста
   document.body.style.userSelect = 'none';
 
   document.addEventListener('mousemove', onMouseMove);
@@ -64,6 +64,22 @@ function onMouseUp() {
   document.removeEventListener('mousemove', onMouseMove);
   document.removeEventListener('mouseup', onMouseUp);
 }
+
+// Закрытие модалки по нажатию клавиши Escape
+function handleKeyDown(event: KeyboardEvent) {
+  if (event.key === 'Escape') {
+    postStore.toggleModal();
+  }
+}
+
+// Добавляем и удаляем обработчик события keydown
+onMounted(() => {
+  window.addEventListener('keydown', handleKeyDown);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', handleKeyDown);
+});
 </script>
 
 <template>
@@ -72,14 +88,16 @@ function onMouseUp() {
   >
     <div
       ref="modalRef"
-      class="bg-white rounded-lg shadow-lg w-full max-w-72 sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl absolute "
+      class="bg-white rounded-lg shadow-lg w-full max-w-72 sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl absolute"
     >
       <!-- Заголовок модалки и кнопка закрытия (только они позволяют перетаскивать модалку) -->
       <div
         class="flex items-center justify-center cursor-move bg-gray-800 p-4 w-full border-b border-gray-300"
         @mousedown="onMouseDown"
       >
-        <h3 class="text-xl sm:text-2xl font-semibold text-white select-none">Create Post</h3>
+        <h3 class="text-xl sm:text-2xl font-semibold text-white select-none">
+          Create Post
+        </h3>
         <ModalCloseButton />
       </div>
 
