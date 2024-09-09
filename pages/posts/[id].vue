@@ -8,7 +8,7 @@
       </button>
     </div>
     <div v-else class="text-center mt-10">
-      <p>Loading...</p>
+      <Loading/>
     </div>
   </div>
 </template>
@@ -17,6 +17,7 @@
 import { computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { usePostStore } from '~/store/postStore';
+import Loading from '~/components/UI/Loading.vue';
 
 const route = useRoute();
 const router = useRouter();

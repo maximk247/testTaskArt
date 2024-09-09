@@ -72,19 +72,19 @@ function onMouseUp() {
   >
     <div
       ref="modalRef"
-      class="bg-white rounded-lg shadow-lg max-w-lg w-full absolute"
+      class="bg-white rounded-lg shadow-lg w-full max-w-72 sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl absolute "
     >
       <!-- Заголовок модалки и кнопка закрытия (только они позволяют перетаскивать модалку) -->
       <div
         class="flex items-center justify-center cursor-move bg-gray-800 p-4 w-full border-b border-gray-300"
         @mousedown="onMouseDown"
       >
-        <h3 class="text-2xl font-semibold text-white select-none">Create Post</h3>
+        <h3 class="text-xl sm:text-2xl font-semibold text-white select-none">Create Post</h3>
         <ModalCloseButton />
       </div>
 
       <!-- Форма создания поста -->
-      <div class="p-6">
+      <div class="p-4">
         <PostModalForm
           @submitted="handleFormSubmit"
           @cancel="handleFormCancel"
