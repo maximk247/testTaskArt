@@ -1,7 +1,5 @@
-<script lang="ts" setup>
-import PostTable from './components/PostTable.vue';
-</script>
+<script lang="ts" setup></script>
 
 <template>
-  <PostTable />
+  <NuxtPage />
 </template>
