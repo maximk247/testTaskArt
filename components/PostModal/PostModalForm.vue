@@ -1,6 +1,9 @@
 <script lang="ts" setup>
 import { reactive } from 'vue';
 import { usePostStore } from '~/store/postStore';
+import ButtonComponent from '../UI/ButtonComponent.vue';
+import InputComponent from '../UI/InputComponent.vue';
+import TextareaComponent from '../UI/TextareaComponent.vue';
 
 const postStore = usePostStore();
 
@@ -19,39 +22,27 @@ function submitPost() {
 <template>
   <form @submit.prevent="submitPost">
     <div class="mb-4">
-      <input
-        v-model="post.title"
-        type="text"
-        placeholder="Title"
-        class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-        required
-      />
+      <InputComponent v-model="post.title" placeholder="Title" />
     </div>
 
     <div class="mb-4">
-      <textarea
-        v-model="post.body"
-        placeholder="Body"
-        class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-        rows="5"
-        required
-      />
+      <TextareaComponent v-model="post.body" placeholder="Body" />
     </div>
 
     <div class="mt-4 flex justify-end space-x-4">
-      <button
+      <ButtonComponent
         type="submit"
-        class="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition duration-300 select-none"
-      >
-        Submit
-      </button>
-      <button
+        label="Submit"
+        bg-color="bg-blue-500"
+        text-color="text-white"
+      />
+      <ButtonComponent
         type="button"
-        class="bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600 transition duration-300 select-none"
+        label="Cancel"
+        bg-color="bg-gray-500"
+        text-color="text-white"
         @click="$emit('cancel')"
-      >
-        Cancel
-      </button>
+      />
     </div>
   </form>
 </template>

@@ -1,75 +1,47 @@
-# Nuxt 3 Minimal Starter
+# Таблица с jsonplaceholder/posts
 
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+## Описание
+**Таблица с jsonplaceholder/posts** — это веб-приложение на основе Vue 3, которое позволяет пользователям создавать, просматривать, редактировать посты с поддержкой пагинации и сортировки. Приложение использует Pinia для управления состоянием и TailwindCSS для стилизации.
 
-## Setup
+## Стек технологий
 
-Make sure to install the dependencies:
+- Nuxt 3
+- Vue 3
+- Pinia
+- TailwindCSS
+
+## Установка и запуск
 
 ```bash
-# npm
-npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
+git clone https://github.com/maximk247/testTaskArt.git
 ```
 
-## Development Server
-
-Start the development server on `http://localhost:3000`:
+```bash
+cd testTaskArt
+```
 
 ```bash
-# npm
+npm i
+```
+
+```bash
 npm run dev
-
-# pnpm
-pnpm run dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
 ```
 
-## Production
+## Структура проекта
 
-Build the application for production:
+- **components/**
+  - **UI/** — Компоненты интерфейса
+  - **PostModal/** — Модальное окно для создания поста
+  - **PostTable/** — Таблица постов
+- **store/** — Магазин данных Pinia
+- **pages/** — Страницы приложения
+- `app.vue` — Главный компонент приложения
 
-```bash
-# npm
-npm run build
+## Особенности
 
-# pnpm
-pnpm run build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm run preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+- **Пагинация:** Поддержка переключения страниц с постами.
+- **Сортировка:** Сортировка постов по ID.
+- **Модальные окна:** Модальные окна для создания и редактирования постов.
+- **TailwindCSS:** Адаптивная стилизация интерфейса.
+- **Обращение к конкретному посту** Возможность перейти на страницу конкретного поста по заголовку

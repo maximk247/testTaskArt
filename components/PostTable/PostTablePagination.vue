@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { storeToRefs } from 'pinia';
+import ButtonComponent from '~/components/UI/ButtonComponent.vue';
 import { usePostStore } from '~/store/postStore';
 
 const postStore = usePostStore();
@@ -32,38 +33,40 @@ function lastPage() {
 
 <template>
   <div class="flex justify-center gap-2 mt-4">
-    <button
-      class="bg-gray-200 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded select-none"
+    <ButtonComponent
+      label="First"
       :disabled="currentPage === 1"
-      :class="{ 'opacity-50 cursor-not-allowed': currentPage === 1 }"
+      bg-color="bg-gray-200 hover:bg-gray-400"
+      text-color="text-black"
       @click="firstPage"
-    >
-      First
-    </button>
-    <button
-      class="bg-gray-200 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded select-none"
+    />
+
+    <ButtonComponent
+      label="Previous"
       :disabled="currentPage === 1"
-      :class="{ 'opacity-50 cursor-not-allowed': currentPage === 1 }"
+      bg-color="bg-gray-200 hover:bg-gray-400"
+      text-color="text-black"
       @click="prevPage"
+    />
+
+    <span class="py-2 px-4 select-none"
+      >Page {{ currentPage }} of {{ totalPages }}</span
     >
-      Previous
-    </button>
-    <span class="py-2 px-4 select-none">Page {{ currentPage }} of {{ totalPages }}</span>
-    <button
-      class="bg-gray-200 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded select-none"
+
+    <ButtonComponent
+      label="Next"
       :disabled="currentPage === totalPages"
-      :class="{ 'opacity-50 cursor-not-allowed': currentPage === totalPages }"
+      bg-color="bg-gray-200 hover:bg-gray-400"
+      text-color="text-black"
       @click="nextPage"
-    >
-      Next
-    </button>
-    <button
-      class="bg-gray-200 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded select-none"
+    />
+
+    <ButtonComponent
+      label="Last"
       :disabled="currentPage === totalPages"
-      :class="{ 'opacity-50 cursor-not-allowed': currentPage === totalPages }"
+      bg-color="bg-gray-200 hover:bg-gray-400"
+      text-color="text-black"
       @click="lastPage"
-    >
-      Last
-    </button>
+    />
   </div>
 </template>
