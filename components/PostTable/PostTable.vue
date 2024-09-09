@@ -34,19 +34,29 @@ function toggleSort() {
     <!-- Отображаем таблицу, пагинацию и возможность добавления поста только если данные загружены и есть посты -->
     <div v-else-if="paginatedPosts.length && totalPages > 0">
       <div class="overflow-x-auto">
-        <table class="min-w-full bg-white">
+        <table
+          class="min-w-full bg-white table-fixed border-separate border-spacing-0"
+        >
           <thead class="bg-gray-800 text-white">
             <tr>
               <th
-                class="py-2 px-4 cursor-pointer flex items-center space-x-1"
+                class="relative py-2 px-4 cursor-pointer flex items-center justify-center text-center"
                 @click="toggleSort"
               >
                 <span>Id</span>
-                <span v-if="postStore.sortOrder === 'asc'">▲</span>
-                <span v-else-if="postStore.sortOrder === 'desc'">▼</span>
+                <span
+                  v-if="postStore.sortOrder === 'asc'"
+                  class="absolute right-2"
+                  >▲</span
+                >
+                <span
+                  v-else-if="postStore.sortOrder === 'desc'"
+                  class="absolute right-2"
+                  >▼</span
+                >
               </th>
-              <th class="py-2 px-4">Title</th>
-              <th class="py-2 px-4">Body</th>
+              <th class="w-4/12 py-2 px-4">Title</th>
+              <th class="w-6/12 py-2 px-4">Body</th>
             </tr>
           </thead>
           <tbody>
@@ -54,9 +64,12 @@ function toggleSort() {
               v-for="post in paginatedPosts"
               :key="post.id"
               class="bg-gray-100 border-b"
+              style="height: 50px"
             >
-              <td class="py-2 px-4">{{ post.id }}</td>
-              <td class="py-2 px-4">
+              <td class="py-2 px-4 border border-gray-300 text-center">
+                {{ post.id }}
+              </td>
+              <td class="py-2 px-4 border border-gray-300">
                 <nuxt-link
                   :to="`/posts/${post.id}`"
                   class="text-blue-500 underline"
@@ -64,7 +77,7 @@ function toggleSort() {
                   {{ post.title }}
                 </nuxt-link>
               </td>
-              <td class="py-2 px-4">{{ post.body }}</td>
+              <td class="py-2 px-4 border border-gray-300">{{ post.body }}</td>
             </tr>
           </tbody>
         </table>

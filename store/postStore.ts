@@ -100,13 +100,17 @@ export const usePostStore = defineStore('post', {
       this.posts.push(newPost);
       // Определяем, на какую страницу переключиться после добавления поста
       if (this.sortOrder === 'asc') {
-        // Если сортировка по возрастанию, переключаемся на последнюю страницу
-        if (this.currentPage !== this.totalPages) {
-          this.setCurrentPage(this.totalPages);
-        }
+        this.setCurrentPage(this.totalPages); // Если сортировка по возрастанию, переключаемся на последнюю страницу
+      } else if (this.sortOrder === 'desc') {
+        this.setCurrentPage(1); // Если сортировка по убыванию, переключаемся на первую страницу
       } else {
-        // Если сортировка по убыванию, переключаемся на первую страницу
-        this.setCurrentPage(1);
+        // Если сортировка отключена
+        const shuffledPosts = this.sortedPosts; // Получаем перемешанные посты
+        const postIndex = shuffledPosts.findIndex(
+          (post) => post.id === newPost.id,
+        ); // Находим индекс нового поста
+        const newPostPage = Math.floor(postIndex / this.postsPerPage) + 1; // Определяем страницу, где находится пост
+        this.setCurrentPage(newPostPage); // Устанавливаем текущую страницу на страницу с новым постом
       }
     },
 

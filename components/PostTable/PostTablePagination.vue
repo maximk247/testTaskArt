@@ -35,6 +35,7 @@ function lastPage() {
     <button
       class="bg-gray-200 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
       :disabled="currentPage === 1"
+      :class="{ 'opacity-50 cursor-not-allowed': currentPage === 1 }"
       @click="firstPage"
     >
       First
@@ -42,6 +43,7 @@ function lastPage() {
     <button
       class="bg-gray-200 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
       :disabled="currentPage === 1"
+      :class="{ 'opacity-50 cursor-not-allowed': currentPage === 1 }"
       @click="prevPage"
     >
       Previous
@@ -50,6 +52,7 @@ function lastPage() {
     <button
       class="bg-gray-200 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
       :disabled="currentPage === totalPages"
+      :class="{ 'opacity-50 cursor-not-allowed': currentPage === totalPages }"
       @click="nextPage"
     >
       Next
@@ -57,6 +60,7 @@ function lastPage() {
     <button
       class="bg-gray-200 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
       :disabled="currentPage === totalPages"
+      :class="{ 'opacity-50 cursor-not-allowed': currentPage === totalPages }"
       @click="lastPage"
     >
       Last

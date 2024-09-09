@@ -10,7 +10,7 @@ function closeModal() {
 
 <template>
   <button
-    class="absolute top-3 right-3 text-gray-500 hover:text-gray-700 transition duration-300"
+    class="absolute top-3 right-3 text-white hover:text-gray-500 transition duration-300"
     @click="closeModal"
   >
     <svg
