@@ -3,7 +3,8 @@ import type { Post } from '~/interfaces/post.interface';
 
 export const usePostStore = defineStore('post', {
   state: () => ({
-    posts: [] as Post[],
+    posts: [] as Post[],  // Отсортированный массив, который мы получаем с сервера
+    shuffledPosts: [] as Post[],  // Перемешанный массив, который мы перемешаем один раз
     loading: false,
     error: null as string | null,
     currentPage: 1,
@@ -11,9 +12,10 @@ export const usePostStore = defineStore('post', {
     totalposts: 0,
     sortOrder: 'none' as 'asc' | 'desc' | 'none',
     showModal: false,
+    postsShuffled: false,  // Флаг для контроля однократного перемешивания
   }),
   getters: {
-    // Получаем отсортированные посты
+    // Получаем отсортированные или перемешанные посты
     sortedPosts(state) {
       switch (state.sortOrder) {
         case 'asc':
@@ -21,8 +23,8 @@ export const usePostStore = defineStore('post', {
         case 'desc':
           return [...state.posts].sort((a, b) => b.id - a.id);
         case 'none':
-          // Перемешиваем посты случайным образом
-          return [...state.posts].sort(() => Math.random() - 0.5);
+          // Возвращаем перемешанные посты (один раз)
+          return state.shuffledPosts.length ? state.shuffledPosts : [...state.posts];
         default:
           return state.posts;
       }
@@ -59,6 +61,13 @@ export const usePostStore = defineStore('post', {
         );
         this.posts = response.data;
         this.totalposts = this.posts.length;
+
+        // Один раз перемешиваем посты
+        if (!this.postsShuffled) {
+          this.shuffledPosts = [...this.posts].sort(() => Math.random() - 0.5);
+          this.postsShuffled = true; // Устанавливаем флаг, что перемешивание выполнено
+        }
+
       } catch (e: unknown) {
         if (e instanceof Error) {
           this.error = e.message;
@@ -78,7 +87,7 @@ export const usePostStore = defineStore('post', {
           this.sortOrder = 'desc';
           break;
         case 'desc':
-          this.sortOrder = 'none';
+          this.sortOrder = 'none'; // При возвращении к "none" возвращаемся к перемешанному списку
           break;
         case 'none':
           this.sortOrder = 'asc';
@@ -98,6 +107,8 @@ export const usePostStore = defineStore('post', {
         userId,
       };
       this.posts.push(newPost);
+      this.shuffledPosts.push(newPost); // Добавляем пост и в перемешанный массив
+
       // Определяем, на какую страницу переключиться после добавления поста
       if (this.sortOrder === 'asc') {
         this.setCurrentPage(this.totalPages); // Если сортировка по возрастанию, переключаемся на последнюю страницу
