@@ -79,7 +79,7 @@ function onMouseUp() {
         class="flex items-center justify-center cursor-move bg-gray-800 p-4 w-full border-b border-gray-300"
         @mousedown="onMouseDown"
       >
-        <h3 class="text-2xl font-semibold text-white">Create Post</h3>
+        <h3 class="text-2xl font-semibold text-white select-none">Create Post</h3>
         <ModalCloseButton />
       </div>
 

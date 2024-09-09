@@ -41,13 +41,13 @@ function submitPost() {
     <div class="mt-4 flex justify-end space-x-4">
       <button
         type="submit"
-        class="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition duration-300"
+        class="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition duration-300 select-none"
       >
         Submit
       </button>
       <button
         type="button"
-        class="bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600 transition duration-300"
+        class="bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600 transition duration-300 select-none"
         @click="$emit('cancel')"
       >
         Cancel
