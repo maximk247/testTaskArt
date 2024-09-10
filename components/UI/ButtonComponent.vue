@@ -13,10 +13,6 @@ defineProps({
     type: String as () => 'reset' | 'submit' | 'button',
     default: 'button',
   },
-  label: {
-    type: String,
-    required: true,
-  },
   bgColor: {
     type: String,
     default: 'bg-gray-500',
@@ -50,6 +46,6 @@ defineExpose({
     ]"
     :disabled="disabled"
   >
-    {{ label }}
+    <slot/> 
   </button>
 </template>

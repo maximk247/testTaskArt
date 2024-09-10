@@ -1,7 +1,9 @@
 <script lang="ts" setup>
 import { reactive, ref } from 'vue';
 import { usePostStore } from '~/store/postStore';
-import ButtonComponent, { type ButtonComponentInstance } from '../UI/ButtonComponent.vue';
+import ButtonComponent, {
+  type ButtonComponentInstance,
+} from '../UI/ButtonComponent.vue';
 import InputComponent from '../UI/InputComponent.vue';
 import TextareaComponent from '../UI/TextareaComponent.vue';
 
@@ -18,7 +20,6 @@ function submitPost() {
   post.body = '';
   emit('submitted');
 }
-
 
 // Обработка нажатия клавиши Enter внутри полей
 function handleKeyDown(event: KeyboardEvent) {
@@ -59,17 +60,19 @@ onBeforeUnmount(() => {
       <ButtonComponent
         ref="submitButtonRef"
         type="submit"
-        label="Submit"
         bg-color="bg-blue-500"
         text-color="text-white"
-      />
+      >
+        Submit
+      </ButtonComponent>
       <ButtonComponent
         type="button"
-        label="Cancel"
         bg-color="bg-gray-500"
         text-color="text-white"
         @click="$emit('cancel')"
-      />
+      >
+        Cancel
+      </ButtonComponent>
     </div>
   </form>
 </template>

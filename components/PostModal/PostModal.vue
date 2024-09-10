@@ -90,7 +90,7 @@ onBeforeUnmount(() => {
       ref="modalRef"
       class="bg-white rounded-lg shadow-lg w-full max-w-72 sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl absolute"
     >
-      <!-- Заголовок модалки и кнопка закрытия (только они позволяют перетаскивать модалку) -->
+      <!-- Контейнер с заголовком модалки и кнопкой закрытия (только он позволяет перетаскивать модалку) -->
       <div
         class="flex items-center justify-center cursor-move bg-gray-800 p-4 w-full border-b border-gray-300"
         @mousedown="onMouseDown"
